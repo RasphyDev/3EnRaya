@@ -1,2 +1,3 @@
-# Conecta4
-Conecta4 en Python
+# 3 en raya
+3 en raya hecho en python
+
