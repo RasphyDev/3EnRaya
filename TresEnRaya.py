@@ -9,6 +9,12 @@
                                 |___/        
 """
 # Variables
+pantallaInicio= """
+_|1|2|3|
+3| | | |
+e|n| | |
+r|a|y|a|
+-+-+-+-+"""
 global jugadorActual
 jugadorActual = 1
 
@@ -22,21 +28,23 @@ def crearTablero(filas, columnas): # Crea el tablero con listas
 
 def mostrarTablero(): # Muestra el tablero en consola
     # Numeros de columnas
-    print("|", end="")
+    print("_|", end="")
     for z in range(len(tablero[0])):
         print(z+1, end="|")
     print("")
 
     # Fichas
+    numerosLaterales = filasTablero
     for x in tablero:
-        print("|", end="")
+        numerosLaterales = numerosLaterales - 1
+        print("{}|".format(filasTablero - numerosLaterales), end="")
         for y in x:
             print(y, end="")
             print("|", end="")
         print("")
 
     # Linea inferior
-    print("+", end="")
+    print("-+", end="")
     for x in range(len(tablero[0])):
         print("-",end="+")
     print("")
@@ -50,46 +58,48 @@ def turnos(jugadorActual):
 
     # Pregunta al jugador el numero de una columna
     columnaElegida = input("Escribe el numero de una columna: ")
+    filaElegida = input("Escribe el numero de una fila: ")
     try:
         int(columnaElegida)
+        int(filaElegida)
     except:
         mostrarTablero()
-        print("Escribe una columna valida")
+        print("Escribe una columna/fila valida")
         turnos(jugadorActual)
 
-    if int(columnaElegida) <= len(tablero[0]):
-        ponerFicha(int(columnaElegida))
+    if int(columnaElegida) <= len(tablero[0]) and int(filaElegida) <= len(tablero[0]):
+        ponerFicha(int(columnaElegida), int(filaElegida))
 
     else:
         mostrarTablero()
-        print("Escribe una columna valida")
+        print("Escribe una columna/fila valida")
         turnos(jugadorActual)
 
-def ponerFicha(columnaElegida):
-    for columna in range(-(len(tablero)), 0):
-        if " " in tablero[(columna*-1)-1][columnaElegida-1]:
-            global jugadorActual
-            if jugadorActual == 1:
-                tablero[(columna*-1)-1][columnaElegida-1] = "X"
-                comprobarVictoria((columna*-1)-1, columnaElegida-1)
-                jugadorActual = 2
-            else: 
-                tablero[(columna*-1)-1][columnaElegida-1] = "O"
-                comprobarVictoria((columna*-1)-1, columnaElegida-1)
-                jugadorActual = 1
+def ponerFicha(columnaElegida, filaElegida):
+    if " " in tablero[filaElegida-1][columnaElegida-1]:
+        global jugadorActual
+        if jugadorActual == 1:
+            tablero[filaElegida-1][columnaElegida-1] = "X"
+            comprobarVictoria()
+            jugadorActual = 2
             mostrarTablero()
-            turnos(jugadorActual)
-
-        elif columna >= -1 :
+        else: 
+            tablero[filaElegida-1][columnaElegida-1] = "O"
+            comprobarVictoria()
+            jugadorActual = 1
             mostrarTablero()
-            print("Escribe en una columna vacia")
-            turnos(jugadorActual)
+        turnos(jugadorActual)
 
-def comprobarVictoria(columnaActual, filaActual):
+    else:
+        mostrarTablero()
+        print("Escribe en un espacio vacio.")
+        turnos(jugadorActual)
+
+def comprobarVictoria():
     # Comprobar filas
-    for columna in range(columnasTablero):
+    for columna in range(columnasTablero+1):
         coincidencias = 0
-        for fila in range(filasTablero):
+        for fila in range(filasTablero+1):
             if jugadorActual == 1:
                 if tablero[filasTablero-columna][fila] != "X":
                     coincidencias = 0
@@ -109,9 +119,9 @@ def comprobarVictoria(columnaActual, filaActual):
                         print("Gana el jugador 2")
                         exit()
     # Comprobar columnas
-    for fila in range(filasTablero):
+    for fila in range(filasTablero+1):
         coincidencias = 0
-        for columna in range(columnasTablero):
+        for columna in range(columnasTablero+1):
             if jugadorActual == 1:
                 if tablero[filasTablero-columna][fila] != "X":
                     coincidencias = 0
@@ -176,9 +186,32 @@ def comprobarVictoria(columnaActual, filaActual):
                         print("Gana el jugador 2")
                         exit()
 
-crearTablero(6, 6) # Crea un tablero (x = filas, y = columnas)
-filasTablero = 6-1
-columnasTablero = 6-1
-mostrarTablero() # Mostrar tablero
+def empezarJuego():
+    global filasTablero
+    global columnasTablero
+    filasTablero = input("Escribe el numero de filas y columnas del tablero: ")
+    try:
+        int(filasTablero)
+    except:
+        print("Escribe un numero valido")
+        empezarJuego()
+        return
 
+    filasTablero = int(filasTablero)-1
+    columnasTablero = filasTablero
+
+    if filasTablero+1 and columnasTablero+1 < 3:
+        print("¡El tablero no puede ser tan pequeño!")
+        empezarJuego()
+
+    else:
+        if filasTablero+1 and columnasTablero+1 > 9:
+            print("¡El tablero no puede ser tan grande!")
+            empezarJuego()
+
+    crearTablero(filasTablero+1, columnasTablero+1) # Crea un tablero (x = filas, y = columnas)
+    mostrarTablero() # Mostrar tablero
+
+print(pantallaInicio)
+empezarJuego()
 turnos(jugadorActual)
