@@ -186,7 +186,10 @@ jugadorActual = 1
 ventana = tkinter.Tk()
 ventana.geometry("300x330")
 ventana.title("Tres en raya")
-ventana.iconbitmap("C:/Users/rasph/Desktop/Programar/Python/TresEnRaya/v2.0/icon.ico")
+try:
+    ventana.iconbitmap("C:/Users/rasph/Desktop/Programar/Python/TresEnRaya/v2.0/icon.ico")
+except:
+    pass
 
 frame1 = tkinter.Frame(ventana)
 frame1.pack()
